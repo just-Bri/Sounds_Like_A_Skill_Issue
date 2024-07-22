@@ -16,3 +16,6 @@ SLASI
 
 # auth stuff
 auth.go
+
+# VS Code
+.vscode
