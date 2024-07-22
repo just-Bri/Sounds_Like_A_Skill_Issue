@@ -5,8 +5,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-
-  build_linux_windows:
+  build_linux:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -20,7 +19,7 @@ jobs:
       run: GOOS=linux GOARCH=amd64 go build -v -o SLASI_linux_v"$1" -ldflags "-X main.SU=${{ secrets.SU }} -X main.SS=${{ secrets.SS }}"
 
     - name: Build Windows
-      run: CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc GOOS=windows GOARCH=amd64 godotenv go build -o SLASI_windows_v"$1".exe -ldflags "-H=windowsgui -s -w -X main.SU=${{ secrets.SU }} -X main.SS=${{ secrets.SS }}"
+      run: CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc GOOS=windows GOARCH=amd64 go build -o SLASI_windows_v"$1".exe -ldflags "-H=windowsgui -s -w -X main.SU=${{ secrets.SU }} -X main.SS=${{ secrets.SS }}"
 
   build_apple:
     runs-on: macos-14
@@ -33,3 +32,16 @@ jobs:
         go-version: '1.22.5'
     - name: Build Apple
       run: GOOS=darwin GOARCH=arm64 go build -o SLASI_apple_m1_v$1 -ldflags "-X main.SU=${{ secrets.SU }} -X main.SS=${{ secrets.SS }}"
+
+  build_windows:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.22.5'
+
+    - name: Build Windows
+      run: CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc GOOS=windows GOARCH=amd64 go build -o SLASI_windows_v"$1".exe -ldflags "-H=windowsgui -s -w -X main.SU=${{ secrets.SU }} -X main.SS=${{ secrets.SS }}"
