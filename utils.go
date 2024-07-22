@@ -25,7 +25,7 @@ func ResetGame() {
 	PlayerInstance.Alive = true
 	Projectiles = nil
 	CurrentScore = 0
-	timer = 0
+	Timer = 0
 	difficultyTimer = 0
 	ProjectileSpawnRate = InitialProjectileSpawnRate
 	isPaused = false

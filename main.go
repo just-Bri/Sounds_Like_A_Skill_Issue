@@ -14,7 +14,7 @@ var gameAssets embed.FS
 var (
 	PlayerInstance     *Player
 	isPaused           bool
-	timer              float32
+	Timer              float32
 	difficultyTimer    float32
 	difficultyInterval float32 = 20
 	spawnTimer         float32
@@ -92,6 +92,7 @@ func update() {
 	}
 
 	dt := rl.GetFrameTime()
+	Timer += dt
 
 	// Difficulty increase logic
 	difficultyTimer += dt

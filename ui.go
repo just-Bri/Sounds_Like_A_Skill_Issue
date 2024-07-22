@@ -156,7 +156,7 @@ func DrawIntro() {
 }
 
 func DrawScore() {
-	rl.DrawText(fmt.Sprintf("Timer: %ds", int(timer)), 0, 0, 20, rl.White)
+	rl.DrawText(fmt.Sprintf("Timer: %ds", int(Timer)), 0, 0, 20, rl.White)
 	rl.DrawText(fmt.Sprintf("Difficulty: %dx", int(ProjectileSpawnRate/InitialProjectileSpawnRate)), 0, 20, 20, rl.White)
 	rl.DrawText(fmt.Sprintf("Score: %d", CurrentScore), 0, 40, 20, rl.White)
 }
