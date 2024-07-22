@@ -1,0 +1,17 @@
+# Git ignore
+
+# env
+.env
+
+# dist files
+SLASI_linux_*
+SLASI_windows_*.exe
+SLASI
+
+# Binaries for programs and plugins
+*.dll
+*.so
+*.dylib
+
+# auth stuff
+auth.go
