@@ -6,6 +6,7 @@
 # dist files
 SLASI_linux_*
 SLASI_windows_*.exe
+SLASI_apple_m1_*
 SLASI
 
 # Binaries for programs and plugins
