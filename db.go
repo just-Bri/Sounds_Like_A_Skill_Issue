@@ -19,18 +19,20 @@ type PlayerScore struct {
 	Version string `json:"Version"`
 }
 
+var SS string
+var SU string
+
 var Highscores []PlayerScore
 
 func FetchHighscores() error {
-	s, u := GetSU()
 	client := &http.Client{}
-	req, err := http.NewRequest("GET", u+"/rest/v1/highscores?select=*&order=Score.desc&limit=10", nil)
+	req, err := http.NewRequest("GET", SU+"/rest/v1/highscores?select=*&order=Score.desc&limit=10", nil)
 	if err != nil {
 		return err
 	}
 
-	req.Header.Add("apikey", s)
-	req.Header.Add("Authorization", "Bearer "+s)
+	req.Header.Add("apikey", SS)
+	req.Header.Add("Authorization", "Bearer "+SS)
 
 	resp, err := client.Do(req)
 	if err != nil {
@@ -58,8 +60,6 @@ func FetchHighscores() error {
 }
 
 func LogHighscore() error {
-	s, u := GetSU()
-
 	maxRetries := 3
 	for i := 0; i < maxRetries; i++ {
 		playerScore := PlayerScore{
@@ -73,14 +73,14 @@ func LogHighscore() error {
 			return fmt.Errorf("failed to marshal PlayerScore: %v", err)
 		}
 
-		req, err := http.NewRequest("POST", u+"/rest/v1/highscores", bytes.NewBuffer(jsonData))
+		req, err := http.NewRequest("POST", SU+"/rest/v1/highscores", bytes.NewBuffer(jsonData))
 		if err != nil {
 			return fmt.Errorf("failed to create request: %v", err)
 		}
 
 		req.Header.Set("Content-Type", "application/json")
-		req.Header.Set("apikey", s)
-		req.Header.Set("Authorization", "Bearer "+s)
+		req.Header.Set("apikey", SS)
+		req.Header.Set("Authorization", "Bearer "+SS)
 		req.Header.Set("Prefer", "return=minimal") // This tells Supabase to not return the inserted data
 
 		client := &http.Client{}
