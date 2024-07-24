@@ -25,6 +25,7 @@ var (
 )
 
 var player *Player
+var Projectiles []Projectile
 
 func main() {
 	rl.InitWindow(ScreenWidth, ScreenHeight, GameName)
@@ -112,7 +113,7 @@ func update() {
 		RemoveOffscreenProjectiles(player)
 	}
 
-	// Spawn new projectiles
+	// Spawn new Projectiles
 	spawnTimer += dt
 	if spawnTimer >= 1/ProjectileSpawnRate {
 		SpawnProjectile(player)

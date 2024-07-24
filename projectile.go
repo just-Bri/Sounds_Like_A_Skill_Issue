@@ -19,11 +19,8 @@ var (
 	ProjectileSpeed            float32 = 200
 	InitialProjectileSpawnRate float32 = 2
 	ProjectileSpawnRate        float32 = InitialProjectileSpawnRate
-	SpawnTimer                 float32
 	ProjectileSprite           rl.Texture2D
 )
-
-var Projectiles []Projectile
 
 func InitProjectiles() {
 	projectilePngData, err := gameAssets.ReadFile("assets/projectile.png")
@@ -47,17 +44,17 @@ func SpawnProjectile(player *Player) {
 
 	switch side {
 	case 0: // Top
-		x = float32(ScreenWidth)
+		x = float32(rand.Intn(ScreenWidth))
 		y = -50
 	case 1: // Right
 		x = float32(ScreenWidth) + 50
-		y = float32(ScreenHeight)
+		y = float32(rand.Intn(ScreenHeight))
 	case 2: // Bottom
-		x = float32(ScreenWidth)
+		x = float32(rand.Intn(ScreenWidth))
 		y = float32(ScreenHeight) + 50
 	case 3: // Left
 		x = -50
-		y = float32(ScreenHeight)
+		y = float32(rand.Intn(ScreenHeight))
 	}
 
 	dx := player.X - x

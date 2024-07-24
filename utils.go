@@ -76,7 +76,6 @@ func UnloadGame(player *Player) {
 		backgroundMusic = rl.Music{}
 	}
 
-	Projectiles = nil
 	time.Sleep(100 * time.Millisecond)
 	rl.CloseAudioDevice()
 	rl.CloseWindow()
