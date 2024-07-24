@@ -146,7 +146,7 @@ func DrawPlayer(player *Player) {
 	}
 }
 
-func getPlayerInput() (float32, float32) {
+var getPlayerInput = func() (float32, float32) {
 	var dx, dy float32
 
 	if !enteringName {
