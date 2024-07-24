@@ -12,7 +12,6 @@ import (
 var gameAssets embed.FS
 
 var (
-	PlayerInstance     *Player
 	isPaused           bool
 	Timer              float32
 	difficultyTimer    float32
@@ -25,10 +24,12 @@ var (
 	ScoreLogged        bool
 )
 
+var player *Player
+
 func main() {
 	rl.InitWindow(ScreenWidth, ScreenHeight, GameName)
 	rl.SetExitKey(0)
-	defer UnloadGame()
+	defer UnloadGame(player)
 
 	rl.InitAudioDevice()
 
@@ -36,7 +37,9 @@ func main() {
 
 	InitMusic()
 	InitProjectiles()
-	InitPlayer()
+
+	playerOneSpriteSheet := LoadSpritesheet("assets/player_spritesheet.png")
+	player = NewPlayer(ScreenWidth/2, ScreenHeight/2, playerOneSpriteSheet)
 
 	for !rl.WindowShouldClose() {
 		rl.UpdateMusicStream(backgroundMusic)
@@ -46,7 +49,7 @@ func main() {
 		if isPaused && !showHighScores && rl.IsKeyPressed(rl.KeyQ) {
 			break
 		}
-		if !PlayerInstance.Alive && !enteringName && rl.IsKeyPressed(rl.KeyQ) {
+		if !player.Alive && !enteringName && rl.IsKeyPressed(rl.KeyQ) {
 			break
 		}
 	}
@@ -54,25 +57,25 @@ func main() {
 
 func update() {
 	if enteringName {
-		HandleNameInput()
+		HandleNameInput(player)
 		return
 	}
 
-	if !PlayerInstance.Alive && rl.IsKeyReleased(rl.KeyL) && !ScoreLogged {
+	if !player.Alive && rl.IsKeyReleased(rl.KeyL) && !ScoreLogged {
 		enteringName = true
-		PlayerInstance.Name = ""
+		player.Name = ""
 		return
 	}
 
 	if rl.IsKeyReleased(rl.KeyR) || rl.IsGamepadButtonReleased(0, rl.GamepadButtonMiddleLeft) && !enteringName && !showHighScores {
-		ResetGame()
+		ResetGame(player)
 	}
 
 	if (rl.IsKeyReleased(rl.KeyEscape) || rl.IsGamepadButtonReleased(0, rl.GamepadButtonMiddleRight)) && !enteringName && !showHighScores {
 		isPaused = !isPaused
 	}
 
-	if PlayerInstance.Alive && (!isPaused || showHighScores) && (rl.IsKeyReleased(rl.KeyH) || rl.IsGamepadButtonReleased(0, rl.GamepadButtonRightFaceUp)) {
+	if player.Alive && (!isPaused || showHighScores) && (rl.IsKeyReleased(rl.KeyH) || rl.IsGamepadButtonReleased(0, rl.GamepadButtonRightFaceUp)) {
 		showHighScores = !showHighScores
 		isPaused = !isPaused
 		if showHighScores {
@@ -87,7 +90,7 @@ func update() {
 		return
 	}
 
-	if !PlayerInstance.Alive {
+	if !player.Alive {
 		return
 	}
 
@@ -103,16 +106,16 @@ func update() {
 	}
 
 	// Only Update when player is alive and not paused/highscores
-	if !isPaused && !showHighScores && PlayerInstance.Alive {
-		UpdatePlayer(rl.GetFrameTime(), ScreenWidth, ScreenHeight, PlayerInstance.Alive, enteringName)
+	if !isPaused && !showHighScores && player.Alive {
+		UpdatePlayer(player)
 		UpdateProjectiles(dt)
-		RemoveOffscreenProjectiles()
+		RemoveOffscreenProjectiles(player)
 	}
 
 	// Spawn new projectiles
 	spawnTimer += dt
 	if spawnTimer >= 1/ProjectileSpawnRate {
-		SpawnProjectile()
+		SpawnProjectile(player)
 		spawnTimer -= 1 / ProjectileSpawnRate
 	}
 }
@@ -123,9 +126,9 @@ func draw() {
 
 	rl.ClearBackground(rl.Black)
 
-	DrawScore()
+	DrawScore(player)
 	DrawProjectile()
-	DrawPlayer()
+	DrawPlayer(player)
 
 	// Display instruction for pause/highscore
 	currentTime := rl.GetTime()
@@ -133,12 +136,12 @@ func draw() {
 		DrawIntro()
 	}
 
-	if !PlayerInstance.Alive {
-		DrawGameOverScreen(CurrentScore)
+	if !player.Alive {
+		DrawGameOverScreen(player.Score)
 	}
 
 	if enteringName {
-		DrawNameInputScreen()
+		DrawNameInputScreen(player)
 	}
 
 	if showHighScores {

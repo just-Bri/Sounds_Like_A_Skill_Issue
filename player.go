@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	DefaultSpeed  float32 = 200
-	DefaultRadius float32 = 7
+	DefaultPlayerSpeed  float32 = 200
+	DefaultPlayerRadius float32 = 7
 )
 
 type Player struct {
@@ -31,30 +31,25 @@ type Player struct {
 	AnimationSpeed   float32
 	AnimationTimer   float32
 	CurrentDirection int
+	Score            int
 }
 
 const (
-	Up        int = iota // 0
-	Down                 // 1
-	Left                 // 2
-	Right                // 3
-	UpRight              // 4
-	DownRight            // 5
-	DownLeft             // 6
-	UpLeft               // 7
+	up        int = iota // 0
+	down                 // 1
+	left                 // 2
+	right                // 3
+	upRight              // 4
+	downRight            // 5
+	downLeft             // 6
+	upLeft               // 7
 )
-
-type PlayerMovement struct {
-	Speed float32
-}
-
-var CurrentScore int = 0
 
 func NewPlayer(x, y float32, spriteSheet rl.Texture2D) *Player {
 	return &Player{
 		X:                x,
 		Y:                y,
-		Speed:            DefaultSpeed,
+		Speed:            DefaultPlayerSpeed,
 		SpriteSheet:      spriteSheet,
 		FrameWidth:       13,
 		FrameHeight:      17,
@@ -62,106 +57,99 @@ func NewPlayer(x, y float32, spriteSheet rl.Texture2D) *Player {
 		FramesPerRow:     4,
 		AnimationSpeed:   0.25,
 		AnimationTimer:   0,
-		CurrentDirection: Down,
-		Radius:           DefaultRadius,
+		CurrentDirection: down,
+		Radius:           DefaultPlayerRadius,
 		Alive:            true,
 		Width:            13, // sprite width
 		Height:           17, // sprite height
 		Name:             "",
+		Score:            0,
 	}
 }
 
-func InitPlayer() {
-	spriteSheetData, err := gameAssets.ReadFile("assets/player_spritesheet.png")
-	if err != nil {
-		panic(err)
-	}
-	spriteSheet := rl.LoadTextureFromImage(rl.LoadImageFromMemory(".png", spriteSheetData, int32(len(spriteSheetData))))
-
-	PlayerInstance = NewPlayer(ScreenWidth/2, ScreenHeight/2, spriteSheet)
-}
-
-func UpdatePlayer(dt, screenWidth float32, screenHeight float32, alive bool, enteringName bool) {
-	if !PlayerInstance.Alive {
+func UpdatePlayer(player *Player) {
+	if !player.Alive {
 		return
 	}
 
-	playerX, playerY := getInput(alive, enteringName)
+	dt := rl.GetFrameTime()
+
+	playerX, playerY := getPlayerInput()
 
 	if playerX != 0 || playerY != 0 {
-		PlayerInstance.X += playerX * PlayerInstance.Speed * dt
-		PlayerInstance.Y += playerY * PlayerInstance.Speed * dt
+		player.X += playerX * player.Speed * dt
+		player.Y += playerY * player.Speed * dt
 
-		PlayerInstance.AnimationTimer += dt
-		if PlayerInstance.AnimationTimer >= PlayerInstance.AnimationSpeed {
-			PlayerInstance.CurrentFrame = (PlayerInstance.CurrentFrame + 1) % PlayerInstance.FramesPerRow
-			PlayerInstance.AnimationTimer = 0
+		player.AnimationTimer += dt
+		if player.AnimationTimer >= player.AnimationSpeed {
+			player.CurrentFrame = (player.CurrentFrame + 1) % player.FramesPerRow
+			player.AnimationTimer = 0
 		}
 
 		// right and down are positive
 		if playerX == 0 && playerY < 0 {
-			PlayerInstance.CurrentDirection = Up
+			player.CurrentDirection = up
 		}
 		if playerX == 0 && playerY > 0 {
-			PlayerInstance.CurrentDirection = Down
+			player.CurrentDirection = down
 		}
 		if playerX < 0 && playerY == 0 {
-			PlayerInstance.CurrentDirection = Left
+			player.CurrentDirection = left
 		}
 		if playerX > 0 && playerY == 0 {
-			PlayerInstance.CurrentDirection = Right
+			player.CurrentDirection = right
 		}
 		if playerX > 0 && playerY < 0 {
-			PlayerInstance.CurrentDirection = UpRight
+			player.CurrentDirection = upRight
 		}
 		if playerX > 0 && playerY > 0 {
-			PlayerInstance.CurrentDirection = DownRight
+			player.CurrentDirection = downRight
 		}
 		if playerX < 0 && playerY > 0 {
-			PlayerInstance.CurrentDirection = DownLeft
+			player.CurrentDirection = downLeft
 		}
 		if playerX < 0 && playerY < 0 {
-			PlayerInstance.CurrentDirection = UpLeft
+			player.CurrentDirection = upLeft
 		}
 	}
 
 	// Keep player within screen bounds
-	PlayerInstance.X = float32(math.Max(0, math.Min(float64(PlayerInstance.X), float64(screenWidth-PlayerInstance.Width))))
-	PlayerInstance.Y = float32(math.Max(0, math.Min(float64(PlayerInstance.Y), float64(screenHeight-PlayerInstance.Height))))
+	player.X = float32(math.Max(0, math.Min(float64(player.X), float64(ScreenWidth-player.Width))))
+	player.Y = float32(math.Max(0, math.Min(float64(player.Y), float64(ScreenHeight-player.Height))))
 }
 
-func DrawPlayer() {
-	if PlayerInstance.Alive {
+func DrawPlayer(player *Player) {
+	if player.Alive {
 		var row int32
-		switch PlayerInstance.CurrentDirection {
-		case Up:
+		switch player.CurrentDirection {
+		case up:
 			row = 0
-		case Down:
+		case down:
 			row = 1
-		case Left:
+		case left:
 			row = 2
-		case Right:
+		case right:
 			row = 3
-		case UpRight:
+		case upRight:
 			row = 4
-		case DownRight:
+		case downRight:
 			row = 5
-		case DownLeft:
+		case downLeft:
 			row = 6
-		case UpLeft:
+		case upLeft:
 			row = 7
 		}
 
-		sourceRect := rl.NewRectangle(float32(PlayerInstance.CurrentFrame*PlayerInstance.FrameWidth), float32(row*PlayerInstance.FrameHeight), float32(PlayerInstance.FrameWidth), float32(PlayerInstance.FrameHeight))
-		destRect := rl.NewRectangle(PlayerInstance.X, PlayerInstance.Y, PlayerInstance.Width, PlayerInstance.Height)
-		rl.DrawTexturePro(PlayerInstance.SpriteSheet, sourceRect, destRect, rl.NewVector2(0, 0), 0, rl.White)
+		sourceRect := rl.NewRectangle(float32(player.CurrentFrame*player.FrameWidth), float32(row*player.FrameHeight), float32(player.FrameWidth), float32(player.FrameHeight))
+		destRect := rl.NewRectangle(player.X, player.Y, player.Width, player.Height)
+		rl.DrawTexturePro(player.SpriteSheet, sourceRect, destRect, rl.NewVector2(0, 0), 0, rl.White)
 	}
 }
 
-func getInput(alive bool, enteringName bool) (float32, float32) {
+func getPlayerInput() (float32, float32) {
 	var dx, dy float32
 
-	if alive && !enteringName {
+	if !enteringName {
 		if rl.IsKeyDown(rl.KeyW) {
 			dy--
 		}

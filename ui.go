@@ -66,7 +66,7 @@ func DrawHighScoresScreen() {
 	rl.DrawText(instructionText, (ScreenWidth-int32(instructionWidth))/2, ScreenHeight-50, instructionFontSize, rl.White)
 }
 
-func DrawNameInputScreen() {
+func DrawNameInputScreen(player *Player) {
 	rl.DrawRectangle(0, 0, ScreenWidth, ScreenHeight, rl.ColorAlpha(rl.Black, 0.7))
 
 	promptText := "Enter Your Name"
@@ -80,8 +80,8 @@ func DrawNameInputScreen() {
 	rl.DrawText(helperText, (ScreenWidth-int32(helperWidth))/2, ScreenHeight/3+40, helperFontSize, rl.White)
 
 	nameText := "---"
-	if len(PlayerInstance.Name) > 0 {
-		nameText = PlayerInstance.Name + strings.Repeat("-", 3-len(PlayerInstance.Name))
+	if len(player.Name) > 0 {
+		nameText = player.Name + strings.Repeat("-", 3-len(player.Name))
 	}
 	nameFontSize := int32(30)
 	nameWidth := rl.MeasureText(nameText, nameFontSize)
@@ -155,8 +155,8 @@ func DrawIntro() {
 	rl.DrawText(pauseText, pauseTextX, pauseTextY, pauseFontSize, rl.White)
 }
 
-func DrawScore() {
+func DrawScore(player *Player) {
 	rl.DrawText(fmt.Sprintf("Timer: %ds", int(Timer)), 0, 0, 20, rl.White)
 	rl.DrawText(fmt.Sprintf("Difficulty: %dx", int(ProjectileSpawnRate/InitialProjectileSpawnRate)), 0, 20, 20, rl.White)
-	rl.DrawText(fmt.Sprintf("Score: %d", CurrentScore), 0, 40, 20, rl.White)
+	rl.DrawText(fmt.Sprintf("Score: %d", player.Score), 0, 40, 20, rl.White)
 }

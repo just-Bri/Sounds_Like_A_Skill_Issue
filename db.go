@@ -59,12 +59,12 @@ func FetchHighscores() error {
 	return nil
 }
 
-func LogHighscore() error {
+func LogHighscore(player *Player) error {
 	maxRetries := 3
 	for i := 0; i < maxRetries; i++ {
 		playerScore := PlayerScore{
-			Name:    PlayerInstance.Name,
-			Score:   CurrentScore,
+			Name:    player.Name,
+			Score:   player.Score,
 			Version: GameVersion,
 		}
 

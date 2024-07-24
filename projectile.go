@@ -43,7 +43,7 @@ func DrawProjectile() {
 	}
 }
 
-func SpawnProjectile() {
+func SpawnProjectile(player *Player) {
 	side := rand.Intn(4)
 	var x, y float32
 
@@ -62,13 +62,13 @@ func SpawnProjectile() {
 		y = float32(ScreenHeight)
 	}
 
-	dx := PlayerInstance.X - x
-	dy := PlayerInstance.Y - y
+	dx := player.X - x
+	dy := player.Y - y
 	length := float32(math.Sqrt(float64(dx*dx + dy*dy)))
 	dx /= length
 	dy /= length
 
-	direction := rl.Vector2Normalize(rl.Vector2{X: PlayerInstance.X - x, Y: PlayerInstance.Y - y})
+	direction := rl.Vector2Normalize(rl.Vector2{X: player.X - x, Y: player.Y - y})
 	Projectiles = append(Projectiles, Projectile{
 		X:      x,
 		Y:      y,
@@ -84,23 +84,23 @@ func UpdateProjectiles(dt float32) {
 		proj.X += proj.DX * dt
 		proj.Y += proj.DY * dt
 
-		playerRect := rl.NewRectangle(PlayerInstance.X, PlayerInstance.Y, PlayerInstance.Width, PlayerInstance.Height)
+		playerRect := rl.NewRectangle(player.X, player.Y, player.Width, player.Height)
 
 		// Check collision with player
 		if rl.CheckCollisionCircleRec(rl.Vector2{X: proj.X, Y: proj.Y}, proj.Radius, playerRect) {
-			PlayerInstance.Alive = false
+			player.Alive = false
 			break
 		}
 	}
 }
 
-func RemoveOffscreenProjectiles() {
+func RemoveOffscreenProjectiles(player *Player) {
 	for i := len(Projectiles) - 1; i >= 0; i-- {
 		proj := Projectiles[i]
 		if proj.X < -50 || proj.X > float32(ScreenWidth)+50 || proj.Y < -50 || proj.Y > float32(ScreenHeight)+50 {
 			Projectiles = append(Projectiles[:i], Projectiles[i+1:]...)
-			if PlayerInstance.Alive {
-				CurrentScore += int(float32(ProjectileSpawnRate) / InitialProjectileSpawnRate)
+			if player.Alive {
+				player.Score += int(float32(ProjectileSpawnRate) / InitialProjectileSpawnRate)
 			}
 		}
 	}
