@@ -1,5 +1,3 @@
-// File: ui.go
-
 package main
 
 import (

@@ -1,5 +1,3 @@
-// File: utils.go
-
 package main
 
 import (

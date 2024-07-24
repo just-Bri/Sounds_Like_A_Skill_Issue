@@ -1,5 +1,3 @@
-// File: consts.go
-
 package main
 
 const (

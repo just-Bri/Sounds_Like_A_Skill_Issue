@@ -1,5 +1,3 @@
-// File: projectile.go
-
 package main
 
 import (

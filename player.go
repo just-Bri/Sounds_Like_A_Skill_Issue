@@ -1,5 +1,3 @@
-// File: player.go
-
 package main
 
 import (
