@@ -145,20 +145,22 @@ func DrawPlayer(player *Player) {
 }
 
 var getPlayerInput = func() (float32, float32) {
-	var dx, dy float32
+	var keyboardX, keyboardY float32
+	var controllerX, controllerY float32
+	var outputX, outputY float32
 
 	if !enteringName {
 		if rl.IsKeyDown(rl.KeyW) {
-			dy--
+			keyboardY--
 		}
 		if rl.IsKeyDown(rl.KeyS) {
-			dy++
+			keyboardY++
 		}
 		if rl.IsKeyDown(rl.KeyA) {
-			dx--
+			keyboardX--
 		}
 		if rl.IsKeyDown(rl.KeyD) {
-			dx++
+			keyboardX++
 		}
 
 		if rl.IsGamepadAvailable(0) {
@@ -166,34 +168,42 @@ var getPlayerInput = func() (float32, float32) {
 			leftY := rl.GetGamepadAxisMovement(0, rl.GamepadAxisLeftY)
 
 			if math.Abs(float64(leftX)) > 0.2 {
-				dx += leftX
-			}
-			if math.Abs(float64(leftY)) > 0.2 {
-				dy += leftY
+				controllerX += leftX
+			} else if rl.IsGamepadButtonDown(0, rl.GamepadButtonLeftFaceLeft) {
+				controllerX--
+			} else if rl.IsGamepadButtonDown(0, rl.GamepadButtonLeftFaceRight) {
+				controllerX++
 			}
 
-			// D-pad
-			if rl.IsGamepadButtonDown(0, rl.GamepadButtonLeftFaceUp) {
-				dy--
+			if math.Abs(float64(leftY)) > 0.2 {
+				controllerY += leftY
+			} else if rl.IsGamepadButtonDown(0, rl.GamepadButtonLeftFaceUp) {
+				controllerY--
 			}
 			if rl.IsGamepadButtonDown(0, rl.GamepadButtonLeftFaceDown) {
-				dy++
-			}
-			if rl.IsGamepadButtonDown(0, rl.GamepadButtonLeftFaceLeft) {
-				dx--
-			}
-			if rl.IsGamepadButtonDown(0, rl.GamepadButtonLeftFaceRight) {
-				dx++
+				controllerY++
 			}
 		}
 	}
 
-	// Normalize diagonal movement
-	if dx != 0 && dy != 0 {
-		length := float32(math.Sqrt(float64(dx*dx + dy*dy)))
-		dx /= length
-		dy /= length
+	if rl.IsKeyDown(rl.KeyA) || rl.IsKeyDown(rl.KeyD) {
+		outputX = keyboardX
+	} else {
+		outputX = controllerX
 	}
 
-	return dx, dy
+	if rl.IsKeyDown(rl.KeyW) || rl.IsKeyDown(rl.KeyS) {
+		outputY = keyboardY
+	} else {
+		outputY = controllerY
+	}
+
+	// Normalize diagonal movement
+	if outputX != 0 && outputY != 0 {
+		length := float32(math.Sqrt(float64(outputX*outputX + outputY*outputY)))
+		outputX /= length
+		outputY /= length
+	}
+
+	return outputX, outputY
 }
