@@ -38,7 +38,7 @@ func HandleNameInput(player *Player) {
 		player.Name += string(key)
 	}
 
-	if rl.IsKeyPressed(rl.KeyBackspace) && len(player.Name) > 0 {
+	if rl.IsKeyReleased(rl.KeyBackspace) && len(player.Name) > 0 {
 		player.Name = player.Name[:len(player.Name)-1]
 	}
 

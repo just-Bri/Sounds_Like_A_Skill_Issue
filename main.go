@@ -47,10 +47,10 @@ func main() {
 		update()
 		draw()
 
-		if isPaused && !showHighScores && (rl.IsKeyPressed(rl.KeyQ) || rl.IsGamepadButtonPressed(0, rl.GamepadButtonRightFaceRight)) {
+		if isPaused && !showHighScores && (rl.IsKeyReleased(rl.KeyQ) || rl.IsGamepadButtonPressed(0, rl.GamepadButtonRightFaceRight)) {
 			break
 		}
-		if !player.Alive && !enteringName && (rl.IsKeyPressed(rl.KeyQ) || rl.IsGamepadButtonPressed(0, rl.GamepadButtonRightFaceRight)) {
+		if !player.Alive && !enteringName && (rl.IsKeyReleased(rl.KeyQ) || rl.IsGamepadButtonPressed(0, rl.GamepadButtonRightFaceRight)) {
 			break
 		}
 	}
