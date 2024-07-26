@@ -186,13 +186,13 @@ var getPlayerInput = func() (float32, float32) {
 		}
 	}
 
-	if rl.IsKeyDown(rl.KeyA) || rl.IsKeyDown(rl.KeyD) {
+	if keyboardX != 0 {
 		outputX = keyboardX
 	} else {
 		outputX = controllerX
 	}
 
-	if rl.IsKeyDown(rl.KeyW) || rl.IsKeyDown(rl.KeyS) {
+	if keyboardY != 0 {
 		outputY = keyboardY
 	} else {
 		outputY = controllerY
