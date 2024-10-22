@@ -1,6 +1,6 @@
 module SLASI
 
-go 1.22.5
+go 1.23.2
 
 require (
 	github.com/gen2brain/raylib-go/raylib v0.0.0-20241019150900-b7833eeae8d0
