@@ -1,8 +1,8 @@
 package game
 
 const (
-	ScreenWidth  = 640
-	ScreenHeight = 480
-	GameVersion  = "0.1.7"
+	ScreenWidth  = 1280
+	ScreenHeight = 800
+	GameVersion  = "0.2.0"
 	GameName     = "Sounds Like A Skill Issue"
 )
