@@ -1,4 +1,4 @@
-# Sounds_Like_A_Skill_Issue
+# Sounds Like A Skill Issue
 
 A simple 2D bullet hell game written in [Go](https://go.dev/) using [Ebitengine](https://github.com/hajimehoshi/ebiten)
 
